@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Recycling Rewards</title>
+    <link rel="stylesheet" type="text/css" href="../static/reward.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Recycling Rewards</h1>
+      <p>
+        Thank you for recycling! You can redeem your points for gift cards and
+        other prizes.
+      </p>
+      <form>
+        <label for="points">Enter your points:</label>
+        <input type="number" id="points" name="points" />
+        <button type="button" onclick="redeemPoints()">Redeem</button>
+      </form>
+      <div id="result"></div>
+    </div>
+    <script src="../static/reward.js"></script>
+  </body>
+</html>
