@@ -1,32 +1,36 @@
-from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from flask import request, jsonify
 from models import db, User, TokenBlacklist
 from email_authentication import EmailAuthentication
+from flask import Flask
 
-app = FastAPI()
 
-@app.on_event("startup")
-async def startup():
-    db.init_app(app)
-    await db.create_all()
+# Initialize the Flask application
+app = Flask(__name__)
 
-@app.post("/")
-async def register(request: Request):
-    data = await request.json()
+# Configure the Flask app to use a SQLite database using Flask SQLAlchemy
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///../app.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db.init_app(app)
+
+# Define the routes for the Flask app
+@app.route('/', methods=['GET', 'POST'])
+def register():
+    db.create_all()
+    data = request.get_json()
     username = data.get('username')
     email = data.get('email')
     password = data.get('password')
     email_authentication=EmailAuthentication(username=username, email=email)
 
     if not username or not email or not password:
-        return JSONResponse(content={'message': 'Please enter all required information.'}, status_code=400)
+        return jsonify({'message': 'Please enter all required information.'}), 400
 
     elif not email_authentication.validate_email_payload():
-        return JSONResponse(content={'message': 'Please enter a valid username and email'}, status_code=400)
+        return jsonify({'message': 'Please enter a valid username and email'}), 400
 
 
     if User.query.filter_by(username=username).first() or User.query.filter_by(email=email).first():
-        return JSONResponse(content={'message': 'That username or email already exists. Please choose another.'}, status_code=400)
+        return jsonify({'message': 'That username or email already exists. Please choose another.'}), 400
 
     user = User(username=username, email=email)
     user.set_password(password)
@@ -34,47 +38,47 @@ async def register(request: Request):
     db.session.add(user)
     db.session.commit()
 
-    return JSONResponse(content={'message': f'User {username} successfully registered.'}, status_code=201)
+    return jsonify({'message': f'User {username} successfully registered.'}), 201
 
-@app.post("/login")
-async def login(request: Request):
-    data = await request.json()
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
     username_or_email = data.get('username_or_email')
     password = data.get('password')
 
     if not username_or_email or not password:
-        return JSONResponse(content={'message': 'Please enter your username or email and password.'}, status_code=400)
+        return jsonify({'message': 'Please enter your username or email and password.'}), 400
 
     user = User.query.filter((User.username == username_or_email) | (User.email == username_or_email)).first()
 
     if not user or not user.check_password(password):
-        return JSONResponse(content={'message': 'Invalid login credentials. Please try again.'}, status_code=401)
+        return jsonify({'message': 'Invalid login credentials. Please try again.'}), 401
 
     auth_token = user.encode_auth_token(user.id)
-    return JSONResponse(content={'auth_token': auth_token.decode(), 'message': f'Welcome back, {user.username}.'}, status_code=200)
+    return jsonify({'auth_token': auth_token.decode(), 'message': f'Welcome back, {user.username}.'}), 200
 
-@app.post("/forgot-password")
-async def forgot_password(request: Request):
-    data = await request.json()
+@app.route('/forgot-password', methods=['POST'])
+def forgot_password():
+    data = request.get_json()
     email = data.get('email')
 
     if not email:
-        return JSONResponse(content={'message': 'Please enter your email.'}, status_code=400)
+        return jsonify({'message': 'Please enter your email.'}), 400
 
     user = User.query.filter_by(email=email).first()
 
     if not user:
-        return JSONResponse(content={'message': 'Invalid email. Please try again.'}, status_code=401)
+        return jsonify({'message': 'Invalid email. Please try again.'}), 401
 
     reset_token = user.generate_password_reset_token(email)
 
     # Here you would send an email to the user containing the reset token
     # You could use a service like SendGrid or Mailgun to handle this
 
-    return JSONResponse(content={'message': 'An email containing instructions to reset your password has been sent.'}, status_code=200)
+    return jsonify({'message': 'An email containing instructions to reset your password has been sent.'}), 200
 
-@app.post("/change-password")
-async def change_password(request: Request):
+@app.route('/change-password', methods=['POST'])
+def change_password():
     auth_header = request.headers.get('Authorization')
     if auth_header:
         auth_token = auth_header.split(" ")[1]
@@ -86,25 +90,75 @@ async def change_password(request: Request):
 
         if not isinstance(resp, str):
             user = User.query.filter_by(id=resp['sub']).first()
-            data = await request.json()
+            data = request.get_json()
             old_password = data.get('old_password')
             new_password = data.get('new_password')
 
             if not old_password or not new_password:
-                return JSONResponse(content={'message': 'Please enter your old and newpasswords.'}, status_code=400)
+                return jsonify({'message': 'Please enter your old and new password.'}), 400
 
-        if not user.check_password(old_password):
-            return JSONResponse(content={'message': 'Incorrect old password. Please try again.'}, status_code=401)
+            if not user.check_password(old_password):
+                return jsonify({'message': 'Invalid old password. Please try again.'}), 401
 
-        user.set_password(new_password)
-        db.session.commit()
+            user.set_password(new_password)
+            db.session.commit()
 
-        # Add token to blacklist to revoke user's previous tokens
-        token = TokenBlacklist(token=auth_token)
-        db.session.add(token)
-        db.session.commit()
+            return jsonify({'message': 'Password successfully changed.'}), 200
 
-        return JSONResponse(content={'message': 'Password successfully changed.'}, status_code=200)
-
+        else:
+            return jsonify({'message': resp}), 401
+        
     else:
-        return JSONResponse(content={'message': 'Authentication token is missing or invalid.'}, status_code=401)
+        return jsonify({'message': 'Authentication token required.'}), 401
+
+@app.route('/logout')
+def logout():
+    auth_header = request.headers.get('Authorization')
+    if auth_header:
+        auth_token = auth_header.split(" ")[1]
+    else:
+        auth_token = ''
+
+    if auth_token:
+        resp = User.decode_auth_token(auth_token)
+        if not isinstance(resp, str):
+            # mark the token as blacklisted
+            jti = resp['jti']
+            token = TokenBlacklist(jti=jti, token=auth_token)
+            try:
+                # add the token to the blacklist
+                db.session.add(token)
+                db.session.commit()
+                return jsonify({'message': 'Successfully logged out.'}), 200
+            except Exception as e:
+                return jsonify({'message': 'Something went wrong.', 'error': str(e)}), 500
+        else:
+            return jsonify({'message': resp}), 401
+    else:
+        return jsonify({'message': 'Authentication token required.'}), 401
+
+
+@app.route('/profile')
+def profile():
+    auth_header = request.headers.get('Authorization')
+    if auth_header:
+        auth_token = auth_header.split(" ")[1]
+    else:
+        auth_token = ''
+
+    if auth_token:
+        resp = User.decode_auth_token(auth_token)
+
+        if not isinstance(resp, str):
+            user = User.query.filter_by(id=resp['sub']).first()
+            return jsonify({'id': user.id, 'username': user.username, 'email': user.email}), 200
+
+        else:
+            return jsonify({'message': resp}), 401
+        
+    else:
+        return jsonify({'message': 'Authentication token required.'}), 401
+
+
+if __name__=="__main__":
+    app.run(debug=True)
