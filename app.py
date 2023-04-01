@@ -25,7 +25,7 @@ def index():
     db.create_all()
     return jsonify({'message': 'Welcome.'}), 201
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/signup', methods=['GET', 'POST'])
 def register():
     data = request.get_json()
     username = data.get('username')
