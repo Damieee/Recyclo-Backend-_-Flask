@@ -1,7 +1,10 @@
 from flask import request, jsonify
 from models import db, User, TokenBlacklist
-from email_authentication import EmailAuthentication
+from authentication.email_authentication import EmailAuthentication
+from geopy.distance import geodesic
+from GPS_Tracking.recycle_bin_locations import bins
 from flask import Flask
+
 
 
 # Initialize the Flask application
@@ -159,6 +162,23 @@ def profile():
     else:
         return jsonify({'message': 'Authentication token required.'}), 401
 
+
+@app.route('/gps')
+def get_bins():
+    user_lat = float(request.args.get('lat'))
+    user_lon = float(request.args.get('lon'))
+
+    bins_with_distance = [
+        {
+            'id': bin['id'],
+            'name': bin['name'],
+            'address': bin['address'],
+            'distance': geodesic((user_lat, user_lon), (bin['lat'], bin['lon'])).km
+        }
+        for bin in bins
+    ]
+    bins_sorted_by_distance = sorted(bins_with_distance, key=lambda bin: bin['distance'])
+    return jsonify({'bins': bins_sorted_by_distance})
 
 if __name__=="__main__":
     app.run(debug=True)
