@@ -1,8 +1,9 @@
-from flask import request, jsonify
+from flask import request, jsonify, abort
 from models import db, User, TokenBlacklist
 from authentication.email_authentication import EmailAuthentication
 from geopy.distance import geodesic
 from GPS_Tracking.recycle_bin_locations import bins
+from reward.recycle_reward import reward_cards
 from flask import Flask
 
 
@@ -179,6 +180,18 @@ def get_bins():
     ]
     bins_sorted_by_distance = sorted(bins_with_distance, key=lambda bin: bin['distance'])
     return jsonify({'bins': bins_sorted_by_distance})
+
+@app.route('/rewards', methods=['GET'])
+def get_rewards():
+    return jsonify({'rewards': reward_cards})
+
+@app.route('/rewards/<int:reward_id>', methods=['GET'])
+def get_reward(reward_id):
+    reward = [reward for reward in reward_cards if reward['id'] == reward_id]
+    if len(reward) == 0:
+        abort(404)
+    return jsonify({'reward': reward[0]})
+
 
 if __name__=="__main__":
     app.run(debug=True)
