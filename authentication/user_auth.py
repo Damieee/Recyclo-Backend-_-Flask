@@ -1,5 +1,5 @@
 from flask import request, jsonify
-from models import User, db, app
+from ..models import User, db, app, TokenBlacklist
 from email_authentication import EmailAuthentication
 import os
 
@@ -85,31 +85,31 @@ def change_password():
     else:
         auth_token = ''
 
-    if not auth_token:
+    if auth_token:
+        resp = User.decode_auth_token(auth_token)
+
+        if not isinstance(resp, str):
+            user = User.query.filter_by(id=resp['sub']).first()
+            data = request.get_json()
+            old_password = data.get('old_password')
+            new_password = data.get('new_password')
+
+            if not old_password or not new_password:
+                return jsonify({'message': 'Please enter your old and new password.'}), 400
+
+            if not user.check_password(old_password):
+                return jsonify({'message': 'Invalid old password. Please try again.'}), 401
+
+            user.set_password(new_password)
+            db.session.commit()
+
+            return jsonify({'message': 'Password successfully changed.'}), 200
+
+        else:
+            return jsonify({'message': resp}), 401
+        
+    else:
         return jsonify({'message': 'Authentication token required.'}), 401
-
-    data = request.get_json()
-    current_password = data.get('current_password')
-    new_password = data.get('new_password')
-
-    if not current_password or not new_password:
-        return jsonify({'message': 'Please enter your current password and new password.'}), 400
-
-    resp = User.decode_auth_token(auth_token)
-
-    if isinstance(resp, str):
-        return jsonify({'message': resp}), 401
-
-    user = User.query.filter_by(id=resp['sub']).first()
-
-    if not user or not user.check_password(current_password):
-        return jsonify({'message': 'Invalid current password. Please try again.'}), 401
-
-    user.set_password(new_password)
-    db.session.commit()
-
-    return jsonify({'message': 'Password successfully updated.'}), 200
-
 
 @app.route('/logout')
 def logout():
@@ -158,6 +158,5 @@ def profile():
         
     else:
         return jsonify({'message': 'Authentication token required.'}), 401
-
 
 
