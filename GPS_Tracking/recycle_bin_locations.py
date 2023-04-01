@@ -1,3 +1,7 @@
+import requests
+import geocoder
+import jsonify
+
 # Define some sample recycling bins
 bins = [
     {
@@ -24,3 +28,18 @@ bins = [
     }
 ]
 
+class Gps:
+
+    @staticmethod
+    def gps_location():
+
+        # Get the user's IP address
+        ip = requests.get('https://api.ipify.org').text
+
+        # Use the IP address to get the location information
+        g = geocoder.ip(ip)
+
+        # Get the latitude and longitude from the location information
+        latitude, longitude = g.latlng
+
+        return ({"Latitude": latitude, "Longitude": longitude})
