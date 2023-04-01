@@ -23,7 +23,7 @@ gps=Gps()
 @app.route('/', methods=['GET'])
 def index():
     db.create_all()
-    return jsonify({'message': 'Please enter all required information.'}), 201
+    return jsonify({'message': 'Welcome.'}), 201
 
 @app.route('/', methods=['GET', 'POST'])
 def register():
