@@ -18,9 +18,15 @@ db.init_app(app)
 gps=Gps()
 
 # Define the routes for the Flask app
+
+# Define the routes for the Flask app
+@app.route('/', methods=['GET'])
+def index():
+    db.create_all()
+    return jsonify({'message': 'Please enter all required information.'}), 201
+
 @app.route('/', methods=['GET', 'POST'])
 def register():
-    db.create_all()
     data = request.get_json()
     username = data.get('username')
     email = data.get('email')
