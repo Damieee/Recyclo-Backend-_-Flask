@@ -1,17 +1,14 @@
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import Boolean, Integer, Column, ForeignKey, String
 import jwt
 
-# Initialize the Flask application
-app = Flask(__name__)
-db = SQLAlchemy(app)
-
-
+db = SQLAlchemy()
 
 # Define the User model for the database
 class User(db.Model):
+    __tablename__="user"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -37,7 +34,6 @@ class User(db.Model):
             }
             return jwt.encode(
                 payload,
-                app.config.get('SECRET_KEY'),
                 algorithm='HS256'
             )
         except Exception as e:
@@ -46,7 +42,7 @@ class User(db.Model):
     @staticmethod
     def decode_auth_token(auth_token):
         try:
-            payload = jwt.decode(auth_token, app.config.get('SECRET_KEY'))
+            payload = jwt.decode(auth_token)
             return payload['sub']
         except jwt.ExpiredSignatureError:
             return 'Token expired. Please log in again.'
@@ -63,9 +59,30 @@ class User(db.Model):
             }
 
             # Encode the payload as a JWT token
-            token = jwt.encode(payload, app.config.get('SECRET_KEY'), algorithm='HS256')
+            token = jwt.encode(payload, algorithm='HS256')
 
             # Return the token as a string
             return token.decode('utf-8')
         except Exception as e:
             return e
+
+class TokenBlacklist(db.Model):
+    __tablename__ = 'token_blacklist'
+    id = db.Column(db.Integer, primary_key=True)
+    jti = db.Column(db.String(36), nullable=False)
+    token = db.Column(db.String(500), nullable=False)
+    expires_at = db.Column(db.DateTime, nullable=False)
+
+    def __init__(self, jti, token):
+        self.jti = jti
+        self.token = token
+        self.expires_at = datetime.utcnow() + timedelta(days=7)
+
+    @classmethod
+    def is_token_blacklisted(cls, jti):
+        token = cls.query.filter_by(jti=jti).first()
+        return bool(token and token.expires_at > datetime.utcnow())
+
+    def save_to_db(self):
+        db.session.add(self)
+        db.session.commit()
