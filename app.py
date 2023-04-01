@@ -2,7 +2,7 @@ from flask import request, jsonify, abort
 from models import db, User, TokenBlacklist
 from authentication.email_authentication import EmailAuthentication
 from geopy.distance import geodesic
-from GPS_Tracking.recycle_bin_locations import bins
+from GPS_Tracking.recycle_bin_locations import bins, Gps
 from reward.recycle_reward import reward_cards
 from flask import Flask
 
@@ -15,6 +15,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///../app.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
+gps=Gps()
 
 # Define the routes for the Flask app
 @app.route('/', methods=['GET', 'POST'])
@@ -29,7 +30,7 @@ def register():
     if not username or not email or not password:
         return jsonify({'message': 'Please enter all required information.'}), 400
 
-    elif not email_authentication.validate_email_payload():
+    if not email_authentication.validate_email_payload():
         return jsonify({'message': 'Please enter a valid username and email'}), 400
 
 
@@ -142,6 +143,39 @@ def logout():
         return jsonify({'message': 'Authentication token required.'}), 401
 
 
+@app.route('/delete-account', methods=['POST'])
+def delete_account():
+    auth_header = request.headers.get('Authorization')
+    if auth_header:
+        auth_token = auth_header.split(" ")[1]
+    else:
+        auth_token = ''
+
+    if auth_token:
+        resp = User.decode_auth_token(auth_token)
+
+        if not isinstance(resp, str):
+            user_id = resp['sub']
+            user = User.query.filter_by(id=user_id).first()
+
+            if user:
+                db.session.delete(user)
+                db.session.commit()
+
+                jti = resp['jti']
+                token = TokenBlacklist(jti=jti, token=auth_token)
+                db.session.add(token)
+                db.session.commit()
+
+                return jsonify({'message': 'Account deleted successfully.'}), 200
+            else:
+                return jsonify({'message': 'User not found.'}), 404
+        else:
+            return jsonify({'message': resp}), 401
+    else:
+        return jsonify({'message': 'Authentication token required.'}), 401
+
+
 @app.route('/profile')
 def profile():
     auth_header = request.headers.get('Authorization')
@@ -166,8 +200,9 @@ def profile():
 
 @app.route('/gps')
 def get_bins():
-    user_lat = float(request.args.get('lat'))
-    user_lon = float(request.args.get('lon'))
+    location=gps.gps_location()
+    user_lat = location["Latitude"]
+    user_lon = location["Latitude"]
 
     bins_with_distance = [
         {
