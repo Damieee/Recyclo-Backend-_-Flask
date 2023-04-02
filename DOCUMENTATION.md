@@ -6,89 +6,90 @@ This is a `RESTful API` that allows a mobile application to interact with a data
 
 ## Endpoints:
 
-- GET '/'
-This endpoint provides a welcome message to the user.
+    - GET '/'
+        This endpoint provides a welcome message to the user.
 
-Response: JSON object with the message "Welcome My Friend"
+        Response: JSON object with the message "Welcome My Friend"
 
-- GET/POST `/signup/<username>/<email>/<password>`
-This endpoint allows users to register with the application by providing their username, email, and password.
+    - GET/POST `/signup/<username>/<email>/<password>`
+        This endpoint allows users to register with the application by providing their username, email, and password.
 
-* Request Parameters:
+        Request Parameters:
 
-username: string
-email: string
-password: string
-Response:
+        username: string
+        email: string
+        password: string
+        Response:
 
-If successful, JSON object with the message "User <username> successfully registered." and HTTP status code 201 (Created)
-If unsuccessful, JSON object with an error message and HTTP status code 400 (Bad Request)
+        If successful, JSON object with the message "User <username> successfully registered." and HTTP status code 201 (Created)
+        If unsuccessful, JSON object with an error message and HTTP status code 400 (Bad Request)
 
-- GET/POST `/signin/string:username_or_email/<password>`
-This endpoint allows registered users to sign in by providing their username or email and password.
+    - GET/POST `/signin/string:username_or_email/<password>`
+        This endpoint allows registered users to sign in by providing their username or email and password.
 
-* Request Parameters:
+        Request Parameters:
 
-username_or_email: string
-password: string
-Response:
+        username_or_email: string
+        password: string
+        Response:
 
-If successful, JSON object with the message "Welcome back, <username>." and HTTP status code 200 (OK)
-If unsuccessful, JSON object with an error message and HTTP status code 401 (Unauthorized)
+        If successful, JSON object with the message "Welcome back, <username>." and HTTP status code 200 (OK)
+        If unsuccessful, JSON object with an error message and HTTP status code 401 (Unauthorized)
 
-- GET/POST `/forgot_password/<email>`
-This endpoint allows users to initiate the password reset process by providing their email address.
+    - GET/POST `/forgot_password/<email>`
+        This endpoint allows users to initiate the password reset process by providing their email address.
 
-Request Parameters:
+        Request Parameters:
 
-email: string
-Response:
+        email: string
+        Response:
 
-If successful, JSON object with the message "An email containing instructions to reset your password has been sent." and HTTP status code 200 (OK)
-If unsuccessful, JSON object with an error message and HTTP status code 401 (Unauthorized)
+        If successful, JSON object with the message "An email containing instructions to reset your password has been sent." and HTTP status code 200 (OK)
+        If unsuccessful, JSON object with an error message and HTTP status code 401 (Unauthorized)
 
-- GET/POST `/change_password/<email>/<old_password>/<new_password>`
-This endpoint allows users to change their password by providing their email, old password, and new password.
+    - GET/POST `/change_password/<email>/<old_password>/<new_password>`
+        This endpoint allows users to change their password by providing their email, old password, and new password.
 
-Request Parameters:
+        Request Parameters:
 
-email: string
-old_password: string
-new_password: string
-Response:
+        email: string
+        old_password: string
+        new_password: string
+        Response:
 
-If successful, JSON object with the message "Password successfully changed." and HTTP status code 200 (OK)
-If unsuccessful, JSON object with an error message and HTTP status code 401 (Unauthorized)
+        If successful, JSON object with the message "Password successfully changed." and HTTP status code 200 (OK)
+        If unsuccessful, JSON object with an error message and HTTP status code 401 (Unauthorized)
 
-- GET `/gps`
-This endpoint retrieves the GPS coordinates of the user and returns a list of recycle bins sorted by their distance from the user.
+    - GET `/gps`
+        This endpoint retrieves the GPS coordinates of the user and returns a list of recycle bins sorted by their distance from the user.
 
-Request Parameters: None
+        Request Parameters: None
 
-Response:
+        Response:
 
-If successful, JSON object with an array of bins sorted by their distance from the user and HTTP status code 200 (OK)
-If unsuccessful, JSON object with an error message and HTTP status code 404 (Not Found)
+        If successful, JSON object with an array of bins sorted by their distance from the user and HTTP status code 200 (OK)
+        If unsuccessful, JSON object with an error message and HTTP status code 404 (Not Found)
 
-- GET `/rewards`
-This endpoint retrieves a list of reward cards that can be redeemed by the user.
+    - GET `/rewards`
+        This endpoint retrieves a list of reward cards that can be redeemed by the user.
 
-Request Parameters: None
+        Request Parameters: None
 
-Response:
+        Response:
 
-If successful, JSON object with an array of reward cards and HTTP status code 200 (OK)
+        If successful, JSON object with an array of reward cards and HTTP status code 200 (OK)
 
-- GET `/rewards/int:reward_id`
-This endpoint retrieves a specific reward card by its ID.
+    - GET `/rewards/int:reward_id`
+        This endpoint retrieves a specific reward card by its ID.
 
-Request Parameters:
+        Request Parameters:
 
-reward_id: integer
-Response:
+        reward_id: integer
+        Response:
 
-If successful, JSON object with the reward card matching the provided ID and HTTP status code 200 (OK)
-If unsuccessful, JSON object with an error message and HTTP status code 404 (Not Found)
-Conclusion:
+        If successful, JSON object with the reward card matching the provided ID and HTTP status code 200 (OK)
+        If unsuccessful, JSON object with an error message and HTTP status code 404 (Not Found)
+
+## Conclusion:
 
 This API allows mobile developers to integrate the back-end functionality of the application into their front-end. By leveraging Flask and Python, the API provides authentication, GPS data, and rewards functionality to the application. Developers can use this documentation to understand the endpoints available and their input/output parameters.
