@@ -22,15 +22,12 @@ gps=Gps()
 # Define the routes for the Flask app
 @app.route('/', methods=['GET'])
 def index():
-    db.create_all()
-    return jsonify({'message': 'Welcome.'}), 201
+    return jsonify({'message': 'Please enter all required information.'}), 201
 
-@app.route('/signup', methods=['GET', 'POST'])
-def register():
-    data = request.get_json()
-    username = data.get('username')
-    email = data.get('email')
-    password = data.get('password')
+@app.route('/signup/<username>/<email>/<password>', methods=['GET', 'POST'])
+def register(username, email, password):
+    db.create_all()
+
     email_authentication=EmailAuthentication(username=username, email=email)
 
     if not username or not email or not password:
@@ -51,12 +48,8 @@ def register():
 
     return jsonify({'message': f'User {username} successfully registered.'}), 201
 
-@app.route('/login', methods=['POST'])
-def login():
-    data = request.get_json()
-    username_or_email = data.get('username_or_email')
-    password = data.get('password')
-
+@app.route('/signin/<string:username_or_email>/<password>', methods=['GET', 'POST'])
+def login(username_or_email, password):
     if not username_or_email or not password:
         return jsonify({'message': 'Please enter your username or email and password.'}), 400
 
@@ -66,13 +59,11 @@ def login():
         return jsonify({'message': 'Invalid login credentials. Please try again.'}), 401
 
     auth_token = user.encode_auth_token(user.id)
-    return jsonify({'auth_token': auth_token.decode(), 'message': f'Welcome back, {user.username}.'}), 200
+    return jsonify({'message': f'Welcome back, {user.username}.'}), 200
 
-@app.route('/forgot-password', methods=['POST'])
-def forgot_password():
-    data = request.get_json()
-    email = data.get('email')
 
+@app.route('/forgot_password/<email>', methods=['GET','POST'])
+def forgot_password(email):
     if not email:
         return jsonify({'message': 'Please enter your email.'}), 400
 
@@ -88,120 +79,21 @@ def forgot_password():
 
     return jsonify({'message': 'An email containing instructions to reset your password has been sent.'}), 200
 
-@app.route('/change-password', methods=['POST'])
-def change_password():
-    auth_header = request.headers.get('Authorization')
-    if auth_header:
-        auth_token = auth_header.split(" ")[1]
-    else:
-        auth_token = ''
 
-    if auth_token:
-        resp = User.decode_auth_token(auth_token)
+@app.route('/change_password/<email>/<old_password>/<new_password>', methods=['GET', 'POST'])
+def change_password(email, old_password, new_password):
+    if not old_password or not new_password:
+        return jsonify({'message': 'Please enter your old and new password.'}), 400
 
-        if not isinstance(resp, str):
-            user = User.query.filter_by(id=resp['sub']).first()
-            data = request.get_json()
-            old_password = data.get('old_password')
-            new_password = data.get('new_password')
+    user = User.query.filter((User.email == email)).first()
 
-            if not old_password or not new_password:
-                return jsonify({'message': 'Please enter your old and new password.'}), 400
+    if not user.check_password(old_password):
+        return jsonify({'message': 'Invalid old password. Please try again.'}), 401
 
-            if not user.check_password(old_password):
-                return jsonify({'message': 'Invalid old password. Please try again.'}), 401
+    user.set_password(new_password)
+    db.session.commit()
 
-            user.set_password(new_password)
-            db.session.commit()
-
-            return jsonify({'message': 'Password successfully changed.'}), 200
-
-        else:
-            return jsonify({'message': resp}), 401
-        
-    else:
-        return jsonify({'message': 'Authentication token required.'}), 401
-
-@app.route('/logout')
-def logout():
-    auth_header = request.headers.get('Authorization')
-    if auth_header:
-        auth_token = auth_header.split(" ")[1]
-    else:
-        auth_token = ''
-
-    if auth_token:
-        resp = User.decode_auth_token(auth_token)
-        if not isinstance(resp, str):
-            # mark the token as blacklisted
-            jti = resp['jti']
-            token = TokenBlacklist(jti=jti, token=auth_token)
-            try:
-                # add the token to the blacklist
-                db.session.add(token)
-                db.session.commit()
-                return jsonify({'message': 'Successfully logged out.'}), 200
-            except Exception as e:
-                return jsonify({'message': 'Something went wrong.', 'error': str(e)}), 500
-        else:
-            return jsonify({'message': resp}), 401
-    else:
-        return jsonify({'message': 'Authentication token required.'}), 401
-
-
-@app.route('/delete-account', methods=['POST'])
-def delete_account():
-    auth_header = request.headers.get('Authorization')
-    if auth_header:
-        auth_token = auth_header.split(" ")[1]
-    else:
-        auth_token = ''
-
-    if auth_token:
-        resp = User.decode_auth_token(auth_token)
-
-        if not isinstance(resp, str):
-            user_id = resp['sub']
-            user = User.query.filter_by(id=user_id).first()
-
-            if user:
-                db.session.delete(user)
-                db.session.commit()
-
-                jti = resp['jti']
-                token = TokenBlacklist(jti=jti, token=auth_token)
-                db.session.add(token)
-                db.session.commit()
-
-                return jsonify({'message': 'Account deleted successfully.'}), 200
-            else:
-                return jsonify({'message': 'User not found.'}), 404
-        else:
-            return jsonify({'message': resp}), 401
-    else:
-        return jsonify({'message': 'Authentication token required.'}), 401
-
-
-@app.route('/profile')
-def profile():
-    auth_header = request.headers.get('Authorization')
-    if auth_header:
-        auth_token = auth_header.split(" ")[1]
-    else:
-        auth_token = ''
-
-    if auth_token:
-        resp = User.decode_auth_token(auth_token)
-
-        if not isinstance(resp, str):
-            user = User.query.filter_by(id=resp['sub']).first()
-            return jsonify({'id': user.id, 'username': user.username, 'email': user.email}), 200
-
-        else:
-            return jsonify({'message': resp}), 401
-        
-    else:
-        return jsonify({'message': 'Authentication token required.'}), 401
+    return jsonify({'message': 'Password successfully changed.'}), 200
 
 
 @app.route('/gps')
