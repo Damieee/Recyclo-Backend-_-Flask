@@ -43,7 +43,7 @@ class EmailAuthentication():
         else:
             domain_parts = domain.split('.')
         for part in domain_parts:
-            if not part.isalnum() and '-' not in part:
+            if not part.isalnum():
                 raise ValueError(f"Invalid character in domain name: {part}")
             if part.startswith('-') or part.endswith('-'):
                 raise ValueError("Hyphens should not appear as the first or last character of a domain part")
@@ -55,6 +55,6 @@ class EmailAuthentication():
         """
         Validates the email payload and raises ValueError if anything is invalid.
         """
-        self.validate_name(self.username)
-        self.validate_email(self.email)
+        self.validate_name()
+        self.validate_email()
         return True
