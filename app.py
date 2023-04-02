@@ -22,7 +22,7 @@ gps=Gps()
 # Define the routes for the Flask app
 @app.route('/', methods=['GET'])
 def index():
-    return jsonify({'message': 'Please enter all required information.'}), 201
+    return jsonify({'message': 'Welcome My Friend'}), 201
 
 @app.route('/signup/<username>/<email>/<password>', methods=['GET', 'POST'])
 def register(username, email, password):
