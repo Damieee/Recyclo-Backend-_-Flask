@@ -3,7 +3,7 @@ from token_generator import TokenGenerator
 
 # login to the email server
 my_email = "ezekieloluwadamy@gmail.com"
-password = "negselhhavqlkwec"
+password = "SECRET KEY"
 
 tokenize=TokenGenerator()
 my_token=tokenize.generate_token()
