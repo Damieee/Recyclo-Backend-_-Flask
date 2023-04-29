@@ -26,8 +26,8 @@ new_token=token.confirm_token()
 def index():
     return jsonify({'message': 'Welcome My Friend'}), 201
 
-@app.route('/signup/<username>/<email>/<password>', methods=['GET', 'POST'])
-def signup(username, email, password):
+@app.route('/signup/<username>/<email>/<password>/<confirm_password>', methods=['GET', 'POST'])
+def signup(username, email, password, confirm_password):
     db.create_all()
 
     email_authentication=EmailAuthentication(username=username, email=email)
@@ -41,6 +41,9 @@ def signup(username, email, password):
 
     if User.query.filter_by(username=username).first() or User.query.filter_by(email=email).first():
         return jsonify({'message': 'That username or email already exists. Please choose another.'}), 400
+
+    if password !=confirm_password:
+        return jsonify({'message': 'The passwords you entered do not match. Please make sure that both passwords are the same.'}), 400
 
     user = User(username=username, email=email)
     user.set_password(password)
@@ -82,8 +85,8 @@ def forgot_password(email):
 
     return jsonify({'message': 'An email containing instructions to reset your password has been sent.'}), 200
 
-@app.route('/reset_password/<email>/<token>/<new_password>', methods=['GET', 'POST'])
-def reset_password(email, token, new_password):
+@app.route('/reset_password/<email>/<token>/<new_password>/<confirm_password>', methods=['GET', 'POST'])
+def reset_password(email, token, new_password, confirm_password):
     if not email:
         return jsonify({'message': 'Please enter your email.'}), 400
 
@@ -103,22 +106,9 @@ def reset_password(email, token, new_password):
     if not new_password:
         return jsonify({'message': 'Please enter your new password.'}), 400
 
-    user.set_password(new_password)
-    db.session.commit()
+    if new_password != confirm_password:
+        return jsonify({'message': 'The passwords you entered do not match. Please make sure that both passwords are the same.'}), 400
 
-    return jsonify({'message': 'Password successfully changed.'}), 200
-
-
-
-@app.route('/change_password/<email>/<old_password>/<new_password>', methods=['GET', 'POST'])
-def change_password(email, old_password, new_password):
-    if not old_password or not new_password:
-        return jsonify({'message': 'Please enter your old and new password.'}), 400
-
-    user = User.query.filter((User.email == email)).first()
-
-    if not user.check_password(old_password):
-        return jsonify({'message': 'Invalid old password. Please try again.'}), 401
 
     user.set_password(new_password)
     db.session.commit()
