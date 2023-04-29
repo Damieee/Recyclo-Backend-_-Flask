@@ -43,3 +43,6 @@ class Gps:
         latitude, longitude = g.latlng
 
         return ({"Latitude": latitude, "Longitude": longitude})
+
+gps=Gps()
+print(gps.gps_location())
