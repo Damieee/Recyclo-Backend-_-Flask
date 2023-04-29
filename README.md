@@ -1,4 +1,7 @@
 # Recyclo
+
+`Recyclo` is an innovative app that helps users recycle anything and everything. With its intuitive interface and robust recycling database, users can easily find information on how to properly dispose of various materials and items, including plastics, electronics, and household goods.  
+
 <p align="center">
 <img src="static/RECYCLO LOGO 1.png" alt="Recyclo logo 1" width="200"/>
 <img src="static/RECYCLO LOGO 2.png" alt="Recyclo logo 2" width="200"/>
@@ -8,11 +11,7 @@
 <img src="static/RECYCLO LOGO 6.png" alt="Recyclo logo 6" width="200"/>
 <img src="static/RECYCLO LOGO 7.png" alt="Recyclo logo 7" width="200"/>
 <img src="static/RECYCLO LOGO 8.png" alt="Recyclo logo 8" width="200"/>
-<img src="static/RECYCLO LOGO 9.png" alt="Recyclo logo 9" width="200"/>
 </p>
-
-`Recyclo` is an innovative app that helps users recycle anything and everything. With its intuitive interface and robust recycling database, users can easily find information on how to properly dispose of various materials and items, including plastics, electronics, and household goods.  
-
 
 This Flask application provides API endpoints for `user authentication`, `password reset`, 1, and `recycling rewards`.
 
