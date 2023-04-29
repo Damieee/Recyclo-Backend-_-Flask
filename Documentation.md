@@ -11,7 +11,7 @@ This is a `RESTful API` that allows a mobile application to interact with a data
 
     Response: JSON object with the message "Welcome My Friend"
 
-- GET/POST `/signup/<username>/<email>/<password>/<confirm_password>`
+- GET/POST `/signup/<username>/<email>/<password>`
     This endpoint allows users to register with the application by providing their username, email, and password.
 
     Request Parameters:
@@ -36,8 +36,9 @@ This is a `RESTful API` that allows a mobile application to interact with a data
     If successful, JSON object with the message "Welcome back, <username>." and HTTP status code 200 (OK)
     If unsuccessful, JSON object with an error message and HTTP status code 401 (Unauthorized)
 
+
 - GET/POST `/forgot_password/<email>`
-    This endpoint allows users to initiate the password reset process by providing their email address.
+    This endpoint accepts a POST request with the email provided as a parameter. It checks if the provided email exists in the database, and then it generates a reset token and sends an email to the user containing the reset token.
 
     Request Parameters:
 
@@ -47,15 +48,14 @@ This is a `RESTful API` that allows a mobile application to interact with a data
     If successful, JSON object with the message "An email containing instructions to reset your password has been sent." and HTTP status code 200 (OK)
     If unsuccessful, JSON object with an error message and HTTP status code 401 (Unauthorized)
 
-- GET/POST `/reset_password/<token>/<new_password>/<confirm_password>`
-    This endpoint allows users to reset their password by providing their email, token sent to them, new password, and confirm password.
+- GET/POST `/reset_password/<email>/<token>/<new_password>`
+    This endpoint allows users to reset their password by accepting a POST request with the email, token, and new password provided as parameters.
 
     Request Parameters:
 
-    email: string
-    token: string
-    new_password: string
-    confrim_password: string
+    email: 
+    token: 
+    new_password: 
     Response:
 
     If successful, JSON object with the message "Password successfully changed." and HTTP status code 200 (OK)
