@@ -1,4 +1,4 @@
-from flask import request, jsonify, abort
+from flask import request, jsonify, abort, render_template
 from models import db, User, TokenBlacklist
 from authentication.email_authentication import EmailAuthentication
 from geopy.distance import geodesic
@@ -24,7 +24,7 @@ new_token=token.confirm_token()
 # Define the routes for the Flask app
 @app.route('/', methods=['GET'])
 def index():
-    return jsonify({'message': 'Welcome My Friend'}), 201
+    return render_template("index.html")
 
 @app.route('/signup/<username>/<email>/<password>/<confirm_password>', methods=['GET', 'POST'])
 def signup(username, email, password, confirm_password):

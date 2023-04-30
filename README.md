@@ -13,7 +13,7 @@
 <img src="static/RECYCLO LOGO 8.png" alt="Recyclo logo 8" width="200"/>
 </p>
 
-This Flask application provides API endpoints for `user authentication`, `password reset`, 1, and `recycling rewards`.
+This Flask application provides API endpoints for `user authentication`, `password reset`, and `recycling rewards`.
 
 ## Getting Started
 Clone this repository
