@@ -1,7 +1,7 @@
 from flask import request, jsonify, abort, render_template
 from models import db, User
 from flask_swagger import swagger
-from flask_cors import CORS
+from Flask_Cors import CORS
 from webargs.flaskparser import use_args
 from webargs import fields
 from authentication.email_authentication import EmailAuthentication
@@ -26,7 +26,6 @@ db.init_app(app)
 gps=Gps()
 token=Token()
 new_token=token.confirm_token()
-# Define the routes for the Flask app
 
 # Define the routes for the Flask app
 @app.route('/', methods=['GET'])
