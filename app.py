@@ -1,5 +1,9 @@
 from flask import request, jsonify, abort, render_template
-from models import db, User, TokenBlacklist
+from models import db, User
+from flask_swagger import swagger
+from flask_cors import CORS
+from webargs.flaskparser import use_args
+from webargs import fields
 from authentication.email_authentication import EmailAuthentication
 from geopy.distance import geodesic
 from GPS_Tracking.recycle_bin_locations import bins, Gps
@@ -28,8 +32,7 @@ def index():
 
 @app.route('/signup/<username>/<email>/<password>/<confirm_password>', methods=['GET', 'POST'])
 def signup(username, email, password, confirm_password):
-    db.create_all()
-
+   
     email_authentication=EmailAuthentication(username=username, email=email)
 
     if not username or not email or not password:
@@ -147,4 +150,5 @@ def get_reward(reward_id):
 
 
 if __name__=="__main__":
+    db.create_all()
     app.run(debug=True)
