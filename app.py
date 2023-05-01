@@ -148,6 +148,12 @@ def get_reward(reward_id):
         abort(404)
     return jsonify({'reward': reward[0]})
 
+@app.get('/spec')
+def spec():
+    swag = swagger(app)
+    swag['info']['version'] = '1.0'
+    swag['info']['title'] = 'Glidee App API'
+    return jsonify(swag)
 
 if __name__=="__main__":
     db.create_all()
