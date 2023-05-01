@@ -16,6 +16,9 @@ from flask import Flask
 # Initialize the Flask application
 app = Flask(__name__)
 
+# Cross Origin Resource sharing to allow Javascript frontend code access Web Server
+CORS(app, origins=['http://localhost:5000, http://localhost'])
+
 # Configure the Flask app to use a SQLite database using Flask SQLAlchemy
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///../app.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
