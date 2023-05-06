@@ -25,131 +25,93 @@ This is a `RESTful API` that allows a mobile application to interact with a data
     Response: JSON object with the message Welcome to Glidee API. Click <a href="https://github.com/Damieee/Recyclo/blob/main/Documentation.md">This Documentation</a> to learn more about the Routes end points.
 
 
-- GET/POST `/signup`
-  
-    This endpoint allows users to register with the application by providing their username, email, and password.
+## `/signup`
 
-    Create a new user
-    
-    parameters:
-        - in: body
-        - name: data
-        - required:
-            - email
-            - first_name
-            - last_name
-            - password
-            - password_confirm
-        properties:
-            - `email`:
-                type: string
-                description: This is the user's email address
-            - `first_name`:
-                type: string
-                description: This is the user's first name
-            - `last_name`:
-                type: string
-                description: This is the user's last name
-            - `password`:
-                type: string
-                description: This is the user's password
-            - `password_confirm`:
-                type: string
-                description: This is the user's password confirmation
-    responses:
-        - `201`:
-            description: User registered successfully.
-        - `400`:
-            description: 
-                - The passwords do not match.
-                - User with email already exist.
+This endpoint allows users to register with the application by providing their username, email, and password.
 
+### Create a new user
 
-- GET/POST `/signin`
-    This endpoint allows registered users to sign in by providing their username or email and password.
+**HTTP Method**: `POST`
 
-    parameters:
-        - in: body
-        - name: data
-        - required:
-            - email
-            - password
-        properties:
-            email:
-                type: string
-                description: This is the user's email address
-            password:
-                type: string
-                description: This is the user's password
-    responses:
-        - `201`:
-            description: User logged in successfully.
-        - `400`:
-            description: Invalid login credentials.
-        - `500`:
-            description: Error occured.
-    """
+**Request Parameters:**
 
-- GET/POST `/forgot_password`
-    This endpoint allows users to initiate the password reset process by providing their email address.
+| Parameter | Type   | Required | Description                      |
+|-----------|--------|----------|----------------------------------|
+| `email`        | string | Yes      | The user's email address              |
+| `first_name`   | string | Yes      | The user's first name                 |
+| `last_name`    | string | Yes      | The user's last name                  |
+| `password`     | string | Yes      | The user's password                   |
+| `password_confirm` | string | Yes | The user's password confirmation |
 
-    Help users generate Token when they forget their Password
-    ---
-    parameters:
-    -   in: body
-        name: data
-        required:
-            - email
-        properties:
-            `email`:
-                type: string
-                description: This is the user's email address
-    responses:
-        - `200`:
-            description: An email containing instructions to reset your password has been sent..
-        - `400`:
-            description: Invalid login credentials.
+**HTTP Response Codes:**
 
+| Status Code | Description                       |
+|-------------|-----------------------------------|
+| `201`           | User registered successfully.             |
+| `400`           | - The passwords do not match.<br/>- User with email already exists. |
 
-- GET/POST `/reset_password`
-    This endpoint allows users to reset their password by providing their email, token sent to them, new password, and confirm password.
+## `/signin`
 
-    Create a new password for users
-    ---
-    parameters:
-    -   in: body
-        name: data
-        required:
-            - email
-            - token
-            - new_password
-            - confirm_password
+This endpoint allows registered users to sign in by providing their username or email and password.
 
-        properties:
-            - `email`:
-                type: string
-                description: This is the user's email address
-            - `token`:
-                type: string
-                description: This is the token sent to the user's email address
-            - `new_password`:
-                type: string
-                description: This is the user's new password
-            - `confrim_password`:
-                type: string
-                description: This is the user's password confirmation
-        responses:
-            - `201`:
-                description: Password successfully changed
-            - `400`:
-                description: 
-                    - The passwords do not match
-                    - This string can not be empty
-                    - The passwords you entered do not match. Please make sure that both passwords are the same
-            - `401`:
-                description: 
-                    - Invalid email. Please try again
-                    - Invalid Token. Please try again
+**HTTP Method**: `POST`
+
+**Request Parameters:**
+
+| Parameter | Type   | Required | Description                          |
+|-----------|--------|----------|--------------------------------------|
+| `email`        | string | Yes      | The user's email address                  |
+| `password`     | string | Yes      | The user's password                       |
+
+**HTTP Response Codes:**
+
+| Status Code | Description                       |
+|-------------|-----------------------------------|
+| `201`           | User logged in successfully.             |
+| `400`           | Invalid login credentials.          |
+| `500`           | Error occurred.                     |
+
+## `/forgot_password`
+
+This endpoint allows users to initiate the password reset process by providing their email address.
+
+**HTTP Method**: `POST`
+
+**Request Parameters:**
+
+| Parameter | Type   | Required | Description                          |
+|-----------|--------|----------|--------------------------------------|
+| `email`        | string | Yes      | The user's email address                  |
+
+**HTTP Response Codes:**
+
+| Status Code | Description                       |
+|-------------|-----------------------------------|
+| `200`           | An email containing instructions to reset your password has been sent. |
+| `400`           | Invalid login credentials.          |
+
+## `/reset_password`
+
+This endpoint allows users to reset their password by providing their email, token sent to them, new password, and confirm password.
+
+**HTTP Method**: `POST`
+
+**Request Parameters:**
+
+| Parameter | Type   | Required | Description                          |
+|-----------|--------|----------|--------------------------------------|
+| `email`        | string | Yes      | The user's email address                  |
+| `token`        | string | Yes      | The token sent to the user's email address |
+| `new_password` | string | Yes      | The user's new password                  |
+| `confirm_password` | string | Yes | The user's password confirmation |
+
+**HTTP Response Codes:**
+
+| Status Code | Description                       |
+|-------------|-----------------------------------|
+| `201`           | Password successfully changed.            |
+| `400`           | - The passwords do not match.<br/>- This string cannot be empty.<br/>- The passwords you entered do not match. Please make sure that both passwords are the same. |
+| `401`           | - Invalid email. Please try again.<br/>- Invalid token. Please try again. |
 
 
 - GET `/gps`
