@@ -33,34 +33,34 @@ This is a `RESTful API` that allows a mobile application to interact with a data
     Create a new user
     ---
     parameters:
-    -   in: body
-        name: data
-        required:
+        - in: body
+        - name: data
+        - required:
             - email
             - first_name
             - last_name
             - password
             - password_confirm
         properties:
-            `email`:
+            - `email`:
                 type: string
                 description: This is the user's email address
-            `first_name`:
+            - `first_name`:
                 type: string
                 description: This is the user's first name
-            `last_name`:
+            - `last_name`:
                 type: string
                 description: This is the user's last name
-            `password`:
+            - `password`:
                 type: string
                 description: This is the user's password
-            `password_confirm`:
+            - `password_confirm`:
                 type: string
                 description: This is the user's password confirmation
     responses:
-        `201`:
+        - `201`:
             description: User registered successfully.
-        `400`:
+        - `400`:
             description: 
                 - The passwords do not match.
                 - User with email already exist.
@@ -72,9 +72,9 @@ This is a `RESTful API` that allows a mobile application to interact with a data
     """
     ---
     parameters:
-    -   in: body
-        name: data
-        required:
+        - in: body
+        - name: data
+        - required:
             - email
             - password
         properties:
@@ -85,11 +85,11 @@ This is a `RESTful API` that allows a mobile application to interact with a data
                 type: string
                 description: This is the user's password
     responses:
-        201:
+        - `201`:
             description: User logged in successfully.
-        400:
+        - `400`:
             description: Invalid login credentials.
-        500:
+        - `500`:
             description: Error occured.
     """
 
@@ -109,9 +109,9 @@ This is a `RESTful API` that allows a mobile application to interact with a data
                 type: string
                 description: This is the user's email address
     responses:
-        `200`:
+        - `200`:
             description: An email containing instructions to reset your password has been sent..
-        `400`:
+        - `400`:
             description: Invalid login credentials.
 
     """
@@ -132,27 +132,27 @@ This is a `RESTful API` that allows a mobile application to interact with a data
             - confirm_password
 
         properties:
-            `email`:
+            - `email`:
                 type: string
                 description: This is the user's email address
-            `token`:
+            - `token`:
                 type: string
                 description: This is the token sent to the user's email address
-            `new_password`:
+            - `new_password`:
                 type: string
                 description: This is the user's new password
-            `confrim_password`:
+            - `confrim_password`:
                 type: string
                 description: This is the user's password confirmation
         responses:
-            `201`:
+            - `201`:
                 description: Password successfully changed
-            `400`:
+            - `400`:
                 description: 
                     - The passwords do not match
                     - This string can not be empty
                     - The passwords you entered do not match. Please make sure that both passwords are the same
-            `401`:
+            - `401`:
                 description: 
                     - Invalid email. Please try again
                     - Invalid Token. Please try again
