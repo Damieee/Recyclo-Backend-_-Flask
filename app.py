@@ -33,6 +33,7 @@ new_token=token.confirm_token()
 def index():
     return render_template("index.html")
 
+# User Signup Route
 @app.post('/signup')
 @use_args({
     'first_name': fields.Str(required=True, error_messages={'required': 'The first_name field is required'}),
@@ -96,7 +97,7 @@ def signup(data):
 
     return jsonify({'message': f'User registered successfully.'}), 201
 
-
+# User signin Route
 @app.post('/login')
 @use_args({
     'email': fields.Email(required=True),
@@ -146,15 +147,43 @@ def signin(data):
         'data': {'token': auth_token}
     }), 200
 
+# Forgot email route
 @app.route('/forgot_password/<email>', methods=['GET','POST'])
-def forgot_password(email):
+@use_args({
+    'email': fields.Email(required=True, error_messages={'required': 'The email field is required'})
+}, location='json')
+
+def forgot_password(data):
+
+    """
+    Help users generate Token when they forget their Password
+    ---
+    parameters:
+    -   in: body
+        name: data
+        required:
+            - email
+        properties:
+            email:
+                type: string
+                description: This is the user's email address
+    responses:
+        200:
+            description: An email containing instructions to reset your password has been sent..
+        400:
+            description: Invalid login credentials.
+
+    """
+
+    email= data['email']
+
     if not email:
-        return jsonify({'message': 'Please enter your email.'}), 400
+        return jsonify({'message': 'Invalid login credentials.'}), 400
 
     user = User.query.filter_by(email=email).first()
 
     if not user:
-        return jsonify({'message': 'Invalid email. Please try again.'}), 401
+        return jsonify({'message': 'Invalid email. Please try again.'}), 400
 
     reset_token = token.send_token(email=email)
     
@@ -164,6 +193,7 @@ def forgot_password(email):
 
     return jsonify({'message': 'An email containing instructions to reset your password has been sent.'}), 200
 
+# Reset password route
 @app.route('/reset_password/<email>/<token>/<new_password>/<confirm_password>', methods=['GET', 'POST'])
 def reset_password(email, token, new_password, confirm_password):
     if not email:
