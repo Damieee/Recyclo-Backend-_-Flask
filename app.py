@@ -2,6 +2,7 @@ from flask import request, jsonify, abort, render_template
 from models import db, User
 from flask_swagger import swagger
 from Flask_Cors import CORS
+from sqlalchemy.exc import IntegrityError
 from webargs.flaskparser import use_args
 from webargs import fields
 from authentication.email_authentication import EmailAuthentication
