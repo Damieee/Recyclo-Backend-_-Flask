@@ -24,41 +24,98 @@ This is a `RESTful API` that allows a mobile application to interact with a data
 
     Response: JSON object with the message Welcome to Glidee API. Click <a href="https://github.com/Damieee/Recyclo/blob/main/Documentation.md">This Documentation</a> to learn more about the Routes end points.
 
-- GET/POST `/signup/<username>/<email>/<password>/<confirm_password>`
+
+- GET/POST `/signup`
+  
     This endpoint allows users to register with the application by providing their username, email, and password.
 
-    Request Parameters:
-
-    username: string
-    email: string
-    password: string
-    Response:
-
-    If successful, JSON object with the message "User <username> successfully registered." and HTTP status code 201 (Created)
-    If unsuccessful, JSON object with an error message and HTTP status code 400 (Bad Request)
+    """
+    Create a new user
+    ---
+    parameters:
+    -   in: body
+        name: data
+        required:
+            - email
+            - first_name
+            - last_name
+            - password
+            - password_confirm
+        properties:
+            `email`:
+                type: string
+                description: This is the user's email address
+            `first_name`:
+                type: string
+                description: This is the user's first name
+            `last_name`:
+                type: string
+                description: This is the user's last name
+            `password`:
+                type: string
+                description: This is the user's password
+            `password_confirm`:
+                type: string
+                description: This is the user's password confirmation
+    responses:
+        `201`:
+            description: User registered successfully.
+        `400`:
+            description: 
+                - The passwords do not match.
+                - User with email already exist.
+    """
 
 - GET/POST `/signin/string:username_or_email/<password>`
     This endpoint allows registered users to sign in by providing their username or email and password.
 
-    Request Parameters:
-
-    username_or_email: string
-    password: string
-    Response:
-
-    If successful, JSON object with the message "Welcome back, <username>." and HTTP status code 200 (OK)
-    If unsuccessful, JSON object with an error message and HTTP status code 401 (Unauthorized)
+    """
+    Login a user by generating auth token
+    ---
+    parameters:
+    -   in: body
+        name: data
+        required:
+            - email
+            - password
+        properties:
+            email:
+                type: string
+                description: This is the user's email address
+            password:
+                type: string
+                description: This is the user's password
+    responses:
+        201:
+            description: User logged in successfully.
+        400:
+            description: Invalid login credentials.
+        500:
+            description: Error occured.
+    """
 
 - GET/POST `/forgot_password/<email>`
     This endpoint allows users to initiate the password reset process by providing their email address.
 
-    Request Parameters:
+    """
+    Help users generate Token when they forget their Password
+    ---
+    parameters:
+    -   in: body
+        name: data
+        required:
+            - email
+        properties:
+            email:
+                type: string
+                description: This is the user's email address
+    responses:
+        200:
+            description: An email containing instructions to reset your password has been sent..
+        400:
+            description: Invalid login credentials.
 
-    email: string
-    Response:
-
-    If successful, JSON object with the message "An email containing instructions to reset your password has been sent." and HTTP status code 200 (OK)
-    If unsuccessful, JSON object with an error message and HTTP status code 401 (Unauthorized)
+    """
 
 - GET/POST `/reset_password/<token>/<new_password>/<confirm_password>`
     This endpoint allows users to reset their password by providing their email, token sent to them, new password, and confirm password.

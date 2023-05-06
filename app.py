@@ -35,6 +35,7 @@ def index():
 
 # User Signup Route
 @app.post('/signup')
+
 @use_args({
     'first_name': fields.Str(required=True, error_messages={'required': 'The first_name field is required'}),
     'last_name': fields.Str(required=True, error_messages={'required': 'The last_name field is required'}),
@@ -42,43 +43,8 @@ def index():
     'password': fields.Str(required=True, error_messages={'required': 'The password field is required'}),
     'password_confirm': fields.Str(required=True, error_messages={'required': 'The password confirmation field is required'})
 }, location='json')
+
 def signup(data):
-    """
-    Create a new user
-    ---
-    parameters:
-    -   in: body
-        name: data
-        required:
-            - email
-            - first_name
-            - last_name
-            - password
-            - password_confirm
-        properties:
-            email:
-                type: string
-                description: This is the user's email address
-            first_name:
-                type: string
-                description: This is the user's first name
-            last_name:
-                type: string
-                description: This is the user's last name
-            password:
-                type: string
-                description: This is the user's password
-            password_confirm:
-                type: string
-                description: This is the user's password confirmation
-    responses:
-        201:
-            description: User registered successfully.
-        400:
-            description: 
-                - The passwords do not match.
-                - User with email already exist.
-    """
     if data['password'] != data['password_confirm']:
         return jsonify({'message': 'The passwords do not match.'}), 400
 
@@ -99,35 +65,14 @@ def signup(data):
 
 # User signin Route
 @app.post('/login')
+
 @use_args({
     'email': fields.Email(required=True),
     'password': fields.Str(required=True),
 }, location='json')
+
 def signin(data):
-    """
-    Login a user by generating auth token
-    ---
-    parameters:
-    -   in: body
-        name: data
-        required:
-            - email
-            - password
-        properties:
-            email:
-                type: string
-                description: This is the user's email address
-            password:
-                type: string
-                description: This is the user's password
-    responses:
-        201:
-            description: User logged in successfully.
-        400:
-            description: Invalid login credentials.
-        500:
-            description: Error occured.
-    """
+
     user = (
         db.session
         .query(User)
@@ -149,31 +94,12 @@ def signin(data):
 
 # Forgot email route
 @app.route('/forgot_password/<email>', methods=['GET','POST'])
+
 @use_args({
     'email': fields.Email(required=True, error_messages={'required': 'The email field is required'})
 }, location='json')
 
 def forgot_password(data):
-
-    """
-    Help users generate Token when they forget their Password
-    ---
-    parameters:
-    -   in: body
-        name: data
-        required:
-            - email
-        properties:
-            email:
-                type: string
-                description: This is the user's email address
-    responses:
-        200:
-            description: An email containing instructions to reset your password has been sent..
-        400:
-            description: Invalid login credentials.
-
-    """
 
     email= data['email']
 
@@ -189,7 +115,7 @@ def forgot_password(data):
     
 
     # Here you would send an email to the user containing the reset token
-    # You could use a service like SendGrid or Mailgun to handle this
+    # I plan to update this code later by using a service like SendGrid or Mailgun to handle this
 
     return jsonify({'message': 'An email containing instructions to reset your password has been sent.'}), 200
 
