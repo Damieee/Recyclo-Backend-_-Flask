@@ -29,9 +29,8 @@ This is a `RESTful API` that allows a mobile application to interact with a data
   
     This endpoint allows users to register with the application by providing their username, email, and password.
 
-    """
     Create a new user
-    ---
+    
     parameters:
         - in: body
         - name: data
@@ -64,13 +63,11 @@ This is a `RESTful API` that allows a mobile application to interact with a data
             description: 
                 - The passwords do not match.
                 - User with email already exist.
-    """
+
 
 - GET/POST `/signin`
     This endpoint allows registered users to sign in by providing their username or email and password.
 
-    """
-    ---
     parameters:
         - in: body
         - name: data
@@ -96,7 +93,6 @@ This is a `RESTful API` that allows a mobile application to interact with a data
 - GET/POST `/forgot_password`
     This endpoint allows users to initiate the password reset process by providing their email address.
 
-    """
     Help users generate Token when they forget their Password
     ---
     parameters:
@@ -114,12 +110,10 @@ This is a `RESTful API` that allows a mobile application to interact with a data
         - `400`:
             description: Invalid login credentials.
 
-    """
 
 - GET/POST `/reset_password`
     This endpoint allows users to reset their password by providing their email, token sent to them, new password, and confirm password.
 
-    """
     Create a new password for users
     ---
     parameters:
@@ -156,7 +150,6 @@ This is a `RESTful API` that allows a mobile application to interact with a data
                 description: 
                     - Invalid email. Please try again
                     - Invalid Token. Please try again
-        """
 
 
 - GET `/gps`
