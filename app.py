@@ -137,7 +137,7 @@ def reset_password(data):
     confirm_password = data['confirm_password']
 
     if not email:
-        return jsonify({'message': 'Please enter your email.'}), 400
+        return jsonify({'message': 'This string can not be empty'}), 400
 
     user = User.query.filter_by(email=email).first()
 
@@ -153,7 +153,7 @@ def reset_password(data):
         return jsonify({'message': 'Invalid email. Please try again.'}), 401
 
     if not new_password:
-        return jsonify({'message': 'Please enter your new password.'}), 400
+        return jsonify({'message': 'This string cannot be empty'}), 400
 
     if new_password != confirm_password:
         return jsonify({'message': 'The passwords you entered do not match. Please make sure that both passwords are the same.'}), 400

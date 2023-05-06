@@ -66,11 +66,10 @@ This is a `RESTful API` that allows a mobile application to interact with a data
                 - User with email already exist.
     """
 
-- GET/POST `/signin/string:username_or_email/<password>`
+- GET/POST `/signin`
     This endpoint allows registered users to sign in by providing their username or email and password.
 
     """
-    Login a user by generating auth token
     ---
     parameters:
     -   in: body
@@ -94,7 +93,7 @@ This is a `RESTful API` that allows a mobile application to interact with a data
             description: Error occured.
     """
 
-- GET/POST `/forgot_password/<email>`
+- GET/POST `/forgot_password`
     This endpoint allows users to initiate the password reset process by providing their email address.
 
     """
@@ -106,30 +105,59 @@ This is a `RESTful API` that allows a mobile application to interact with a data
         required:
             - email
         properties:
-            email:
+            `email`:
                 type: string
                 description: This is the user's email address
     responses:
-        200:
+        `200`:
             description: An email containing instructions to reset your password has been sent..
-        400:
+        `400`:
             description: Invalid login credentials.
 
     """
 
-- GET/POST `/reset_password/<token>/<new_password>/<confirm_password>`
+- GET/POST `/reset_password`
     This endpoint allows users to reset their password by providing their email, token sent to them, new password, and confirm password.
 
-    Request Parameters:
+    """
+    Create a new password for users
+    ---
+    parameters:
+    -   in: body
+        name: data
+        required:
+            - email
+            - token
+            - new_password
+            - confirm_password
 
-    email: string
-    token: string
-    new_password: string
-    confrim_password: string
-    Response:
+        properties:
+            `email`:
+                type: string
+                description: This is the user's email address
+            `token`:
+                type: string
+                description: This is the token sent to the user's email address
+            `new_password`:
+                type: string
+                description: This is the user's new password
+            `confrim_password`:
+                type: string
+                description: This is the user's password confirmation
+        responses:
+            `201`:
+                description: Password successfully changed
+            `400`:
+                description: 
+                    - The passwords do not match
+                    - This string can not be empty
+                    - The passwords you entered do not match. Please make sure that both passwords are the same
+            `401`:
+                description: 
+                    - Invalid email. Please try again
+                    - Invalid Token. Please try again
+        """
 
-    If successful, JSON object with the message "Password successfully changed." and HTTP status code 200 (OK)
-    If unsuccessful, JSON object with an error message and HTTP status code 401 (Unauthorized)
 
 - GET `/gps`
     This endpoint retrieves the GPS coordinates of the user and returns a list of recycle bins sorted by their distance from the user.
