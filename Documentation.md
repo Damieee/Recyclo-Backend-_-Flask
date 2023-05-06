@@ -113,36 +113,45 @@ This endpoint allows users to reset their password by providing their email, tok
 | `400`           | - The passwords do not match.<br/>- This string cannot be empty.<br/>- The passwords you entered do not match. Please make sure that both passwords are the same. |
 | `401`           | - Invalid email. Please try again.<br/>- Invalid token. Please try again. |
 
+## `/gps`
 
-- GET `/gps`
-    This endpoint retrieves the GPS coordinates of the user and returns a list of recycle bins sorted by their distance from the user.
+This endpoint retrieves the GPS coordinates of the user and returns a list of recycle bins sorted by their distance from the user.
 
-    Request Parameters: None
+**HTTP Method**: `GET`
 
-    Response:
+**Request Parameters**: None
 
-    If successful, JSON object with an array of bins sorted by their distance from the user and HTTP status code 200 (OK)
-    If unsuccessful, JSON object with an error message and HTTP status code 404 (Not Found)
+**Response**:
 
-- GET `/rewards`
-    This endpoint retrieves a list of reward cards that can be redeemed by the user.
+- If successful, JSON object with an array of bins sorted by their distance from the user and HTTP status code 200 (OK)
+- If unsuccessful, JSON object with an error message and HTTP status code 404 (Not Found)
 
-    Request Parameters: None
+## `/rewards`
 
-    Response:
+This endpoint retrieves a list of reward cards that can be redeemed by the user.
 
-    If successful, JSON object with an array of reward cards and HTTP status code 200 (OK)
+**HTTP Method**: `GET`
 
-- GET `/rewards/int:reward_id`
-    This endpoint retrieves a specific reward card by its ID.
+**Request Parameters**: None
 
-    Request Parameters:
+**Response**:
 
-    reward_id: integer
-    Response:
+- If successful, JSON object with an array of reward cards and HTTP status code 200 (OK)
 
-    If successful, JSON object with the reward card matching the provided ID and HTTP status code 200 (OK)
-    If unsuccessful, JSON object with an error message and HTTP status code 404 (Not Found)
+## `/rewards/:reward_id`
+
+This endpoint retrieves a specific reward card by its ID.
+
+**HTTP Method**: `GET`
+
+**Request Parameters**:
+
+- `reward_id`: integer
+
+**Response**:
+
+- If successful, JSON object with the reward card matching the provided ID and HTTP status code 200 (OK)
+- If unsuccessful, JSON object with an error message and HTTP status code 404 (Not Found)
 
 ## Conclusion:
 
