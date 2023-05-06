@@ -120,8 +120,22 @@ def forgot_password(data):
     return jsonify({'message': 'An email containing instructions to reset your password has been sent.'}), 200
 
 # Reset password route
-@app.route('/reset_password/<email>/<token>/<new_password>/<confirm_password>', methods=['GET', 'POST'])
-def reset_password(email, token, new_password, confirm_password):
+@app.route('/reset_password', methods=['GET', 'POST'])
+
+@use_args({
+    'email': fields.Str(required=True, error_messages={'required': 'The first_name field is required'}),
+    'token': fields.Str(required=True, error_messages={'required': 'The last_name field is required'}),
+    'new_password': fields.Str(required=True, error_messages={'required': 'The password field is required'}),
+    'confrim_password': fields.Str(required=True, error_messages={'required': 'The password confirmation field is required'})
+}, location='json')
+
+def reset_password(data):
+
+    email = data['email']
+    token = data['token']
+    new_password = data['new_password']
+    confirm_password = data['confirm_password']
+
     if not email:
         return jsonify({'message': 'Please enter your email.'}), 400
 
