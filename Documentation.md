@@ -19,7 +19,10 @@ This is a `RESTful API` that allows a mobile application to interact with a data
 
 ## Endpoints:
 
-## GET `/`
+- `/`
+
+    **HTTP Method**: `GET`
+
     This endpoint provides a welcome message to the user.
 
     Response: JSON object with the message Welcome to Glidee API. Click <a href="https://github.com/Damieee/Recyclo/blob/main/Documentation.md">This Documentation</a> to learn more about the Routes end points.
