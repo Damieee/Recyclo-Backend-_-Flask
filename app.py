@@ -18,7 +18,7 @@ from flask import Flask
 app = Flask(__name__)
 
 # Cross Origin Resource sharing to allow Javascript frontend code access Web Server
-CORS(app, origins=['http://localhost:5000, http://localhost'])
+CORS(app, origins=['http://localhost:3000'])
 
 # Configure the Flask app to use a SQLite database using Flask SQLAlchemy
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///../app.db'
@@ -93,7 +93,7 @@ def signin(data):
     }), 200
 
 # Forgot email route
-@app.route('/forgot_password/<email>', methods=['GET','POST'])
+@app.route('/forgot_password', methods=['GET','POST'])
 
 @use_args({
     'email': fields.Email(required=True, error_messages={'required': 'The email field is required'})
