@@ -11,6 +11,7 @@ from GPS_Tracking.recycle_bin_locations import bins, Gps
 from reward.recycle_reward import reward_cards
 from send_token import Token
 from flask import Flask
+import os
 
 
 
@@ -23,6 +24,8 @@ CORS(app, origins=['http://localhost:3000'])
 # Configure the Flask app to use a SQLite database using Flask SQLAlchemy
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///../app.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'some-secret-key')
+
 db.init_app(app)
 gps=Gps()
 token=Token()
@@ -31,6 +34,7 @@ new_token=token.confirm_token()
 # Define the routes for the Flask app
 @app.route('/', methods=['GET'])
 def index():
+    db.create_all()
     return render_template("index.html")
 
 # User Signup Route
@@ -202,5 +206,4 @@ def spec():
     return jsonify(swag)
 
 if __name__=="__main__":
-    db.create_all()
     app.run(debug=True)
