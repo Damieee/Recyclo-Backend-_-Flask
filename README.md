@@ -35,6 +35,7 @@ To run the app, type `python app.py` in your terminal.
 
 - `GET /rewards/:id`: This route returns details about a specific recycling reward identified by :id.
 
+
 ## Dependencies
 - Flask
 - Flask_SQLAlchemy
