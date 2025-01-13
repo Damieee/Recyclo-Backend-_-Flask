@@ -27,6 +27,7 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    
     def generate_auth_token(self, user_id):
         payload = {
             'exp': datetime.utcnow() + timedelta(days=1),
