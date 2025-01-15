@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Boolean, Integer, Column, ForeignKey, String
 import jwt
 
+
 db = SQLAlchemy()
 
 # Define the User model for the database
