@@ -6,7 +6,6 @@ import jwt
 
 db = SQLAlchemy()
 
-
 # Define the User model for the database
 class User(db.Model):
     __tablename__ = 'users'
